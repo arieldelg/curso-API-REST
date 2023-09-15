@@ -1,0 +1,19 @@
+{
+  "name": "curso-api-rest",
+  "version": "1.0.0",
+  "description": "Mi primer poyecto usando api",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arieldelg/curso-API-REST.git"
+  },
+  "author": "Ariel Del Grande arieldelgrande@hotmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/arieldelg/curso-API-REST/issues"
+  },
+  "homepage": "https://github.com/arieldelg/curso-API-REST#readme"
+}
