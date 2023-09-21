@@ -1,14 +1,18 @@
 searchFormBtn.addEventListener('click', () => {
-    location.hash = '#search=';
+    location.hash = '#search=' + searchFormInput.value.trimEnd();
 });
 
 arrowBtn.addEventListener('click', () => {
-    location.hash = '#home';
+   
+    movieIMG = []
+    history.back()
 });
 
 trendingBtn.addEventListener('click', () => {
+    
     location.hash = '#trends';
 })
+
 
 const navigator = () => {
     console.log(location.hash);
@@ -20,7 +24,10 @@ const navigator = () => {
     } else if (location.hash.startsWith('#movie=')) {
         moviePage();
     } else if (location.hash.startsWith('#category=')) {
+        
         categoryPage();
+
+        
     } else {
         homePage();
     }
@@ -57,7 +64,8 @@ const searchPage = () => {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
-   
+    
+    searchMovie()
 }
 
 const moviePage = () => {
