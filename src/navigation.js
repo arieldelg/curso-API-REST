@@ -1,22 +1,18 @@
 searchFormBtn.addEventListener('click', () => {
-    location.hash = '#search=' + searchFormInput.value.trimEnd();
+    location.hash = '#search=' + searchFormInput.value;
+    
 });
 
 arrowBtn.addEventListener('click', () => {
-   
-    movieIMG = []
-    history.back()
+        history.back()
 });
 
 trendingBtn.addEventListener('click', () => {
-    
     location.hash = '#trends';
 })
 
 
 const navigator = () => {
-    console.log(location.hash);
-
     if(location.hash.startsWith('#trends')) {
         trendsPage();
     } else if (location.hash.startsWith('#search=')) {
@@ -24,13 +20,12 @@ const navigator = () => {
     } else if (location.hash.startsWith('#movie=')) {
         moviePage();
     } else if (location.hash.startsWith('#category=')) {
-        
         categoryPage();
-
-        
     } else {
         homePage();
     }
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0; 
 }
 
 const trendsPage = () => {
@@ -48,6 +43,7 @@ const trendsPage = () => {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
+    headerCategoryTitle.innerHTML = 'Tendencias'
     trendMovies()
 }
 
@@ -64,8 +60,9 @@ const searchPage = () => {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
-    
-    searchMovie()
+    const [search, name] = location.hash.split('=')
+    console.log(name)
+    searchMovie(name)
 }
 
 const moviePage = () => {
@@ -81,6 +78,9 @@ const moviePage = () => {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.add('inactive');
     movieDetailSection.classList.remove('inactive');
+    const [movie, idName] = location.hash.split('=')
+    const [id, name] = idName.split('-')
+    movieDetail(id, name)
 }
 
 const categoryPage = () => {
@@ -96,7 +96,10 @@ const categoryPage = () => {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
-
+    const [category, idName] = location.hash.split('=');
+    const [id, name] = idName.split('-');
+    headerCategoryTitle.innerHTML = name
+    getMovieByGenres(id) 
 }
 
 const homePage = () => {
