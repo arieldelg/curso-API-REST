@@ -3,7 +3,6 @@ const headerSection = document.querySelector('#header');
 const trendingPreviewSection = document.querySelector('#trendingPreview');
 const categoriesPreviewSection = document.querySelector('#categoriesPreview');
 const genericSection = document.querySelector('#genericList');
-const genericSectionClass = document.querySelector('.genericList-container')
 const movieDetailSection = document.querySelector('#movieDetail');
 
 // Lists & Containers

@@ -8,33 +8,33 @@
     }
 }) */
 
-let botones = []
-let movieIMG = []
 
 
 const movieListPreview = async () => {
-    trendingMoviesPreviewList.innerHTML = null
+   
     const response = await fetch (`https://api.themoviedb.org/3/trending/movie/day?api_key=${APIKEY}`);
     const data = await response.json();
     const movies = data.results;
     console.log({data, movies});
+    trendingMoviesPreviewList.innerHTML = null
     movies.forEach(movie => {
-        trendingMoviesPreviewList.innerHTML += printMovies(movie.title, movie.poster_path)
-        const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
-            element.addEventListener('click', (e) => {
-            const movieInfo = moviesIteration(movies, e.target.alt)
-            location.hash = `#movie=${movieInfo.id}-${movieInfo.name}` 
-            })
-        })
+        trendingMoviesPreviewList.innerHTML += printMovies(movie.title, movie.poster_path);
     });
+    const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
+        element.addEventListener('click', (e) => {
+        const movieInfo = moviesIteration(movies, e.target.alt)
+        location.hash = `#movie=${movieInfo.id}-${movieInfo.name}` 
+        })
+    })
 }
 
 const categoryListPreview = async () => {
-    categoriesPreviewList.innerHTML = null;
+   
     const response = await fetch (`https://api.themoviedb.org/3/genre/movie/list?api_key=${APIKEY}`);
     const data = await response.json();
     const categories = data.genres;
     console.log({data, categories}); 
+    categoriesPreviewList.innerHTML = null;
     categories.forEach(category => {
         categoriesPreviewList.innerHTML += printCategory(category.id, category.name);
     }); 
@@ -53,7 +53,7 @@ const trendMovies = async () => {
     const movies = data.results;
     console.log('trends', movies)
     movies.forEach(movie => {
-        genericSectionClass.innerHTML += printMovies(movie.title, movie.poster_path)
+        genericSection.innerHTML += printMovies(movie.title, movie.poster_path)
     })
     const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
         element.addEventListener('click', (e) => {
@@ -70,7 +70,7 @@ const getMovieByGenres = async (id) => {
     const movies = data.results;
     console.log('trends', movies)
     movies.forEach(movie => {
-        genericSectionClass.innerHTML += printMovies(movie.title, movie.poster_path);
+        genericSection.innerHTML += printMovies(movie.title, movie.poster_path);
     })
     const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
         element.addEventListener('click', (e) => {
@@ -82,14 +82,14 @@ const getMovieByGenres = async (id) => {
 
 const searchMovie = async (name) => {
     
-    genericSectionClass.innerHTML = null
+    genericSection.innerHTML = null
     const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${name}&api_key=${APIKEY}`)
     const data = await response.json();
     const movies = data.results
     console.log('toSearch' ,movies);
      
     movies.forEach(movie => {
-        genericSectionClass.innerHTML += printMovies(movie.title, movie.poster_path)
+        genericSection.innerHTML += printMovies(movie.title, movie.poster_path)
         
     }) 
    const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {

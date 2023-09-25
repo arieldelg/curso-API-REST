@@ -4,7 +4,12 @@ searchFormBtn.addEventListener('click', () => {
 });
 
 arrowBtn.addEventListener('click', () => {
+    if (location.hash === `#search=${searchFormInput.value}`) {
+        return location.hash = '#home'
+    } else {
         history.back()
+    }
+        
 });
 
 trendingBtn.addEventListener('click', () => {
