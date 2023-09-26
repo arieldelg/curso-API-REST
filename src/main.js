@@ -8,28 +8,25 @@
     }
 }) */
 
-
+const lazyLoader = new IntersectionObserver ((entries) => { 
+    entries.forEach(element => {
+        if (element.isIntersecting) {
+            const url = element.target.getAttribute('data-img')
+            element.target.setAttribute('src', url)  
+        }
+    })
+})
 
 const movieListPreview = async () => {
-   
     const response = await fetch (`https://api.themoviedb.org/3/trending/movie/day?api_key=${APIKEY}`);
     const data = await response.json();
     const movies = data.results;
     console.log({data, movies});
     trendingMoviesPreviewList.innerHTML = null
-    movies.forEach(movie => {
-        trendingMoviesPreviewList.innerHTML += printMovies(movie.title, movie.poster_path);
-    });
-    const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
-        element.addEventListener('click', (e) => {
-        const movieInfo = moviesIteration(movies, e.target.alt)
-        location.hash = `#movie=${movieInfo.id}-${movieInfo.name}` 
-        })
-    })
+    createMovies(movies, trendingMoviesPreviewList)
 }
 
 const categoryListPreview = async () => {
-   
     const response = await fetch (`https://api.themoviedb.org/3/genre/movie/list?api_key=${APIKEY}`);
     const data = await response.json();
     const categories = data.genres;
@@ -52,53 +49,41 @@ const trendMovies = async () => {
     const data = await response.json();
     const movies = data.results;
     console.log('trends', movies)
-    movies.forEach(movie => {
-        genericSection.innerHTML += printMovies(movie.title, movie.poster_path)
-    })
-    const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
-        element.addEventListener('click', (e) => {
-            const movieInfo = moviesIteration(movies, e.target.alt)
-            location.hash = `#movie=${movieInfo.id}-${movieInfo.name}`
-        })
-    })
+    maxPage = data.total_pages
+    createMovies(movies, genericSection)
 }
 
+const paginedTrendMovies = async () => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15);
+    const isNotMaxPage = page < maxPage;
+    if (scrollIsBottom && isNotMaxPage) {
+        page++
+        const response = await fetch(`https://api.themoviedb.org/3/trending/movie/day?page=${page}&api_key=${APIKEY}`);
+        const data = await response.json();
+        const movies = data.results;
+        console.log('pagined',movies)
+        createMovies(movies, genericSection)
+    }
+}
+
+    
 const getMovieByGenres = async (id) => {
     genericSection.innerHTML = null 
     const response = await fetch(`https://api.themoviedb.org/3/discover/movie?with_genres=${id}&api_key=${APIKEY}`);
     const data = await response.json();
     const movies = data.results;
     console.log('trends', movies)
-    movies.forEach(movie => {
-        genericSection.innerHTML += printMovies(movie.title, movie.poster_path);
-    })
-    const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
-        element.addEventListener('click', (e) => {
-            const movieInfo = moviesIteration(movies, e.target.alt);
-            location.hash = `#movie=${movieInfo.id}-${movieInfo.name}` 
-        })
-    })
+    createMovies(movies, genericSection)
 } 
 
 const searchMovie = async (name) => {
-    
     genericSection.innerHTML = null
     const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${name}&api_key=${APIKEY}`)
     const data = await response.json();
     const movies = data.results
     console.log('toSearch' ,movies);
-     
-    movies.forEach(movie => {
-        genericSection.innerHTML += printMovies(movie.title, movie.poster_path)
-        
-    }) 
-   const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
-    element.addEventListener('click', (e) => {
-        console.log(e)
-        const movieInfo = moviesIteration(movies, e.target.alt);
-            location.hash = `#movie=${movieInfo.id}-${movieInfo.name}` 
-    })
-   })
+    createMovies(movies, genericSection)
  } 
 
  const printCategory = (id, name) => {
@@ -114,8 +99,8 @@ const printMovies = (title, path) => {
     const print = `
         <div class="movie-container">
             <img
-                src="https://image.tmdb.org/t/p/w300${path}"
-                class="movie-img movieRelated"
+                data-img="https://image.tmdb.org/t/p/w300${path}"
+                class="movie-img"
                 alt="${title}"
             />
         </div>
@@ -156,8 +141,13 @@ const printRelatedMovies = async (id) => {
             location.hash = `#movie=${movieInfo.id}-${movieInfo.name}`
         })
     })
+    const movieImg = document.querySelectorAll('.movie-img').forEach(element => {
+        lazyLoader.observe(element)
+        element.addEventListener('error', () => {
+            element.setAttribute('src', 'https://thumbs.dreamstime.com/b/icono-del-error-16125237.jpg')
+        })
+    })
 }
-
 
 const moviesIteration = (arrayMovies, title) => {
     let id;
@@ -181,4 +171,22 @@ const categoriesIteration = (arrayCategorie, category) => {
         }
     })
     return {id, name};
+}
+
+const createMovies = (array, section) => {
+    array.forEach(movie => {
+        section.innerHTML += printMovies(movie.title, movie.poster_path)
+    })
+    const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
+        element.addEventListener('click', (e) => {
+            const movieInfo = moviesIteration(array, e.target.alt)
+            location.hash = `#movie=${movieInfo.id}-${movieInfo.name}`
+        })
+    })
+    const movieImg = document.querySelectorAll('.movie-img').forEach(element => {
+        lazyLoader.observe(element)
+        element.addEventListener('error', () => {
+            element.setAttribute('src', 'https://thumbs.dreamstime.com/b/icono-del-error-16125237.jpg')
+        })
+    })
 }
