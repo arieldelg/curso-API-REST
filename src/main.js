@@ -8,6 +8,27 @@
     }
 }) */
 
+const checkLikedMovie = () => {
+    const item = JSON.parse(localStorage.getItem('liked_movie'));
+    let movies;
+    if (item) {
+        movies = item;
+    } else {
+        movies = {}
+    }
+    return movies
+}
+
+const likedMovie = (movie) => {
+    const likedMovie = checkLikedMovie();
+    if (likedMovie[movie.id]) {
+        likedMovie[movie.id] = undefined
+    } else {
+        likedMovie[movie.id] = movie
+    }
+    localStorage.setItem('liked_movie', JSON.stringify(likedMovie))
+}
+
 const lazyLoader = new IntersectionObserver ((entries) => { 
     entries.forEach(element => {
         if (element.isIntersecting) {
@@ -23,8 +44,12 @@ const movieListPreview = async () => {
     const movies = data.results;
     console.log({data, movies});
     trendingMoviesPreviewList.innerHTML = null
+    likedMovieList.innerHTML = null
     createMovies(movies, trendingMoviesPreviewList)
+    
 }
+
+
 
 const categoryListPreview = async () => {
     const response = await fetch (`https://api.themoviedb.org/3/genre/movie/list?api_key=${APIKEY}`);
@@ -73,18 +98,55 @@ const getMovieByGenres = async (id) => {
     const response = await fetch(`https://api.themoviedb.org/3/discover/movie?with_genres=${id}&api_key=${APIKEY}`);
     const data = await response.json();
     const movies = data.results;
+    maxPage = data.total_pages
+    console.log(data.total_pages)
     console.log('trends', movies)
     createMovies(movies, genericSection)
-} 
+    createMovies(movies, likedMovieList)
+}
+
+const paginedGenreshMovies = (id) => {
+    return async function () {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15);
+        const isNotMaxPage = page < maxPage;
+        if (scrollIsBottom && isNotMaxPage) {
+            page++
+            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?with_genres=${id}&page=${page}&api_key=${APIKEY}`);
+            const data = await response.json();
+            const movies = data.results;
+            console.log('pagined',movies)
+            createMovies(movies, genericSection)
+        }
+    }
+}
 
 const searchMovie = async (name) => {
     genericSection.innerHTML = null
     const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${name}&api_key=${APIKEY}`)
     const data = await response.json();
     const movies = data.results
+    maxPage = data.total_pages
+    console.log(data.total_pages)
     console.log('toSearch' ,movies);
     createMovies(movies, genericSection)
  } 
+
+ const paginedSearchMovies = (name) => {
+    return async function () {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15);
+        const isNotMaxPage = page < maxPage;
+        if (scrollIsBottom && isNotMaxPage) {
+            page++
+            const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${name}&page=${page}&api_key=${APIKEY}`);
+            const data = await response.json();
+            const movies = data.results;
+            console.log('pagined',movies)
+            createMovies(movies, genericSection)
+        }
+    }
+}
 
  const printCategory = (id, name) => {
     const print = `
@@ -103,6 +165,7 @@ const printMovies = (title, path) => {
                 class="movie-img"
                 alt="${title}"
             />
+            <button class="movie-btn"></button>
         </div>
         `
     return print
@@ -161,6 +224,17 @@ const moviesIteration = (arrayMovies, title) => {
     return {id, name}
 }
 
+const movieCompleteIteration = (arrayMovies, title) => {
+    let movies
+    arrayMovies.forEach(movie => {
+        if (movie.title === title) {
+            movies = movie
+        }
+    })
+    return movies
+}
+
+
 const categoriesIteration = (arrayCategorie, category) => {
     let id;
     let name;
@@ -173,20 +247,29 @@ const categoriesIteration = (arrayCategorie, category) => {
     return {id, name};
 }
 
+
 const createMovies = (array, section) => {
     array.forEach(movie => {
         section.innerHTML += printMovies(movie.title, movie.poster_path)
-    })
-    const movieContainer = document.querySelectorAll('.movie-container').forEach(element => {
-        element.addEventListener('click', (e) => {
-            const movieInfo = moviesIteration(array, e.target.alt)
-            location.hash = `#movie=${movieInfo.id}-${movieInfo.name}`
-        })
     })
     const movieImg = document.querySelectorAll('.movie-img').forEach(element => {
         lazyLoader.observe(element)
         element.addEventListener('error', () => {
             element.setAttribute('src', 'https://thumbs.dreamstime.com/b/icono-del-error-16125237.jpg')
         })
+        element.addEventListener('click', (e) => {
+            const movieInfo = moviesIteration(array, e.target.alt)
+            location.hash = `#movie=${movieInfo.id}-${movieInfo.name}`
+        })
+    })
+    const movieButton = document.querySelectorAll('.movie-btn').forEach(element => {
+        element.addEventListener('click', (e) => {
+            element.classList.toggle('movie-btn--liked');
+            const movieLikedInfo = movieCompleteIteration(array, e.target.parentElement.children[0].alt);
+            console.log(movieLikedInfo); 
+            likedMovie(movieLikedInfo); 
+        })
     })
 }
+
+

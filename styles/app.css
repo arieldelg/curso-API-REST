@@ -89,20 +89,27 @@ button {
 
 
 /* Shared */
-.header-container, .trendingPreview-header, .categoriesPreview-container {
+.header-container, .trendingPreview-header, .categoriesPreview-container, .liked-header {
   padding: 0 24px;
 }
 
-.trendingPreview-container, .categoriesPreview-container, footer {
+.trendingPreview-container, .categoriesPreview-container, .liked-container, footer {
   margin-top: 48px;
 }
 
-.trendingPreview-header, .categoriesPreview-title {
+.trendingPreview-header, .categoriesPreview-title, .liked-header {
   margin-bottom: 24px;
 }
 
 .movie-container {
   cursor: pointer;
+  position: relative;
+}
+
+.liked-movieList > .movie-container {
+  width: 150px;
+  display: inline-block;
+  margin: 0 5px;
 }
 
 .movie-container--loading {
@@ -128,7 +135,33 @@ button {
 
 .movie-img {
   border-radius: 8px;
-  min-height: 250px;
+  min-height: 150px;
+  width: 150px;
+}
+
+.movie-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  height: 30px;
+  width: 30px;
+  border-radius: 30px;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+}
+
+.movie-btn::before {
+  content: '💗'
+}
+
+.movie-btn--liked {
+  background-color: var(--purple-light-2);
+  box-shadow: 0px 0px 20px purple;
+}
+
+.movie-btn--liked::before {
+  content: '💜';
 }
 
 .categoriesPreview-list, .categories-list {
@@ -197,7 +230,7 @@ button {
 
 
 /* Trending */
-.trendingPreview-header {
+.trendingPreview-header, .liked-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -209,7 +242,7 @@ button {
   width: 72px;
 }
 
-.trendingPreview-movieList {
+.trendingPreview-movieList, .liked-movieList {
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;

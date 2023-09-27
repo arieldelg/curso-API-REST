@@ -55,6 +55,7 @@ const trendsPage = () => {
     headerTitle.classList.add('inactive');
     headerCategoryTitle.classList.remove('inactive');
     searchForm.classList.add('inactive');
+    liked.classList.add('inactive')
   
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
@@ -73,14 +74,15 @@ const searchPage = () => {
     headerTitle.classList.add('inactive');
     headerCategoryTitle.classList.add('inactive');
     searchForm.classList.remove('inactive');
+    liked.classList.add('inactive')
   
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
     const [search, name] = location.hash.split('=')
-    console.log(name)
     searchMovie(name)
+    infiniteScroll = paginedSearchMovies(name);
 }
 
 const moviePage = () => {
@@ -91,6 +93,7 @@ const moviePage = () => {
     headerTitle.classList.add('inactive');
     headerCategoryTitle.classList.add('inactive');
     searchForm.classList.add('inactive');
+    liked.classList.add('inactive')
   
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
@@ -109,6 +112,7 @@ const categoryPage = () => {
     headerTitle.classList.add('inactive');
     headerCategoryTitle.classList.remove('inactive');
     searchForm.classList.add('inactive');
+    liked.classList.add('inactive')
 
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
@@ -118,6 +122,7 @@ const categoryPage = () => {
     const [id, name] = idName.split('-');
     headerCategoryTitle.innerHTML = name
     getMovieByGenres(id) 
+    infiniteScroll = paginedGenreshMovies(id)
 }
 
 const homePage = () => {
@@ -129,6 +134,7 @@ const homePage = () => {
     headerTitle.classList.remove('inactive');
     headerCategoryTitle.classList.add('inactive');
     searchForm.classList.remove('inactive');
+    liked.classList.remove('inactive')
 
     trendingPreviewSection.classList.remove('inactive');
     categoriesPreviewSection.classList.remove('inactive');
