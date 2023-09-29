@@ -44,12 +44,9 @@ const movieListPreview = async () => {
     const movies = data.results;
     console.log({data, movies});
     trendingMoviesPreviewList.innerHTML = null
-    likedMovieList.innerHTML = null
-    createMovies(movies, trendingMoviesPreviewList)
     
+    createMovies(movies, trendingMoviesPreviewList)
 }
-
-
 
 const categoryListPreview = async () => {
     const response = await fetch (`https://api.themoviedb.org/3/genre/movie/list?api_key=${APIKEY}`);
@@ -102,13 +99,12 @@ const getMovieByGenres = async (id) => {
     console.log(data.total_pages)
     console.log('trends', movies)
     createMovies(movies, genericSection)
-    createMovies(movies, likedMovieList)
 }
 
 const paginedGenreshMovies = (id) => {
     return async function () {
         const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-        const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15);
+        const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 50);
         const isNotMaxPage = page < maxPage;
         if (scrollIsBottom && isNotMaxPage) {
             page++
@@ -249,8 +245,26 @@ const categoriesIteration = (arrayCategorie, category) => {
 
 
 const createMovies = (array, section) => {
+    section.innerHTML
     array.forEach(movie => {
         section.innerHTML += printMovies(movie.title, movie.poster_path)
+        const movieButton = document.querySelectorAll('.movie-btn').forEach((element) => {
+            const arrayID = Object.values(checkLikedMovie())
+            arrayID.find(find => {
+                if(element.offsetParent !== null){
+                    if(find.title === element.offsetParent.children[0].alt) {
+                        element.classList.add('movie-btn--liked')
+                    } 
+                }
+                
+            })
+            element.addEventListener('click', (e) => {
+                console.log(e)
+                element.classList.toggle('movie-btn--liked');
+                const movieLikedInfo = movieCompleteIteration(array, e.target.parentElement.children[0].alt);
+                likedMovie(movieLikedInfo); 
+            })
+        })
     })
     const movieImg = document.querySelectorAll('.movie-img').forEach(element => {
         lazyLoader.observe(element)
@@ -262,14 +276,19 @@ const createMovies = (array, section) => {
             location.hash = `#movie=${movieInfo.id}-${movieInfo.name}`
         })
     })
-    const movieButton = document.querySelectorAll('.movie-btn').forEach(element => {
-        element.addEventListener('click', (e) => {
-            element.classList.toggle('movie-btn--liked');
-            const movieLikedInfo = movieCompleteIteration(array, e.target.parentElement.children[0].alt);
-            console.log(movieLikedInfo); 
-            likedMovie(movieLikedInfo); 
-        })
-    })
+    
+    
+
+
 }
 
+const sectionLikedMovieList = () => {
+    likedMovieList.innerHTML = null
+    const likedList = checkLikedMovie()
+    const movieArrays = Object.values(likedList);
+    console.log(movieArrays)
+    
+    createMovies(movieArrays, likedMovieList) 
 
+    
+}

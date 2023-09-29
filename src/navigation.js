@@ -143,6 +143,8 @@ const homePage = () => {
     
     movieListPreview();
     categoryListPreview();
+    sectionLikedMovieList();
+    
 }
 
 window.addEventListener('DOMContentLoaded', navigator, false)
